@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descargar Videos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Descargar Videos</h1>
+    <form id="download-form">
+        <input type="text" id="video-link" placeholder="Introduce el link del video" required>
+        <br>
+        <button type="submit">Previsualizar</button>
+    </form>
+    <p id="response-message"></p>
+
+    <!-- Contenedor de previsualización -->
+    <div id="preview" style="display: none;">
+        <img id="thumbnail" src="" alt="Miniatura del video">
+        <h2 id="title"></h2>
+        <button onclick="downloadVideo('mp4')">Descargar como MP4</button>
+        <button onclick="downloadAudio('mp3')">Descargar solo audio (MP3)</button>
+    </div>
+
+    <!-- Spinner de carga -->
+    <div id="loading-spinner" style="display: none;">
+        <div class="spinner"></div>
+        <p>Cargando previsualización, espere por favor...</p>
+    </div>
+
+    <!-- Barra de progreso -->
+    <div id="loading-container" style="display: none; margin-top: 20px;">
+        <progress id="loading-bar" value="0" max="100" style="width: 100%;"></progress>
+        <p id="loading-text">Procesando...</p>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>

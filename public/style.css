@@ -1,0 +1,98 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin-top: 50px;
+}
+
+input {
+    width: 300px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+#preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+#thumbnail {
+    width: 300px; /* Establece el ancho deseado */
+    height: auto; /* Mantiene la proporción de la imagen */
+    border: 2px solid #ddd; /* Añade un borde */
+    border-radius: 10px; /* Añade bordes redondeados */
+    margin-bottom: 10px; /* Espacio entre la imagen y el título */
+}
+
+#title {
+    font-size: 18px; /* Tamaño de fuente para el título */
+    text-align: center; /* Centrar el texto */
+}
+
+
+#loading-bar {
+    height: 20px;
+    border-radius: 5px;
+    width: 80%; /* Ajusta el ancho de la barra de progreso */
+    max-width: 600px; /* Máximo ancho de la barra de progreso */
+}
+
+#loading-text {
+    font-size: 14px;
+    color: #555;
+}
+
+
+#loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+
+#loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border-left-color: #09f;
+    animation: spin 1s ease infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#loading-spinner.download .spinner {
+    display: block;
+}
+
+#loading-spinner.download p {
+    display: none;
+}
