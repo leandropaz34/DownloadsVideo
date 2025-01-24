@@ -5,5 +5,12 @@
     "fs": "^0.0.1-security",
     "path": "^0.12.7",
     "socket.io": "^4.8.1"
-  }
+  },
+  "name": "downloadsvideo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/leandropaz34/DownloadsVideo.git",
+  "author": "Leandro Paz <leandropaz34@gmail.com>",
+  "license": "MIT",
+  "private": true
 }
