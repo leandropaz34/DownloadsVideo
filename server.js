@@ -8,7 +8,7 @@ const socketIo = require("socket.io");
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Configuración y constantes
 const downloadsDir = path.join(__dirname, "downloads");
