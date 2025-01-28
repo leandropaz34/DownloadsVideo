@@ -14,6 +14,15 @@ const PORT = process.env.PORT || 3000;
 const downloadsDir = path.join(__dirname, "downloads");
 const MAX_FILES = 5;
 
+// Comando yt-dlp con cookies
+const command = `yt-dlp --cookies-from-browser chrome --get-title "https://www.youtube.com/watch?v=pVgZ6zYN6ms"`;
+try {
+  const output = execSync(command, { encoding: 'utf-8' });
+  console.log(output);
+} catch (error) {
+  console.error('Error:', error.message);
+}
+
 // Crear el directorio de descargas si no existe
 if (!fs.existsSync(downloadsDir)) {
     fs.mkdirSync(downloadsDir);
