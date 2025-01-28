@@ -144,4 +144,9 @@ server.listen(PORT, () => {
 });
 
 // Emitir progreso al cliente
-io.on("connection
+io.on("connection", (socket) => {
+    console.log("Cliente conectado.");
+    socket.on("disconnect", () => {
+        console.log("Cliente desconectado.");
+    });
+});
