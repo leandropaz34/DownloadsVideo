@@ -13,6 +13,7 @@ const PORT = process.env.PORT || 3000;
 // Configuración y constantes
 const downloadsDir = path.join(__dirname, "downloads");
 const MAX_FILES = 5;
+const cookiesFilePath = path.join(__dirname, "cookies.txt");
 
 // Crear el directorio de descargas si no existe
 if (!fs.existsSync(downloadsDir)) {
@@ -43,19 +44,15 @@ function cleanDownloadsIfNeeded() {
 }
 
 // Ruta para obtener detalles del video
-app.get("/video-details", async (req, res) => {
+app.get("/video-details", (req, res) => {
     const videoUrl = req.query.url;
-
-    // Retraso para reducir la frecuencia de las solicitudes
-    const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-    await delay(5000);
 
     // Obtenemos el título del video y la miniatura usando yt-dlp (funciona para múltiples plataformas)
     let videoTitle = "video";
     let videoThumbnail = "";
     try {
-        videoTitle = execSync(`yt-dlp --cookies-from-browser firefox --get-title "${videoUrl}"`).toString().trim();
-        videoThumbnail = execSync(`yt-dlp --cookies-from-browser firefox --get-thumbnail "${videoUrl}"`).toString().trim();
+        videoTitle = execSync(`yt-dlp --cookies ${cookiesFilePath} --get-title "${videoUrl}"`).toString().trim();
+        videoThumbnail = execSync(`yt-dlp --cookies ${cookiesFilePath} --get-thumbnail "${videoUrl}"`).toString().trim();
         videoTitle = videoTitle.replace(/[^\w\s]/gi, "_");
     } catch (error) {
         console.error("Error al obtener los detalles del video:", error);
@@ -69,7 +66,7 @@ app.get("/video-details", async (req, res) => {
 });
 
 // Ruta para descargar videos o audio
-app.get("/download", async (req, res) => {
+app.get("/download", (req, res) => {
     const videoUrl = req.query.url;
     const format = req.query.format;
 
@@ -79,12 +76,8 @@ app.get("/download", async (req, res) => {
     }
 
     let videoTitle = "video";
-    // Retraso para reducir la frecuencia de las solicitudes
-    const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-    await delay(5000);
-
     try {
-        videoTitle = execSync(`yt-dlp --cookies-from-browser firefox --get-title "${videoUrl}"`).toString().trim();
+        videoTitle = execSync(`yt-dlp --cookies ${cookiesFilePath} --get-title "${videoUrl}"`).toString().trim();
         videoTitle = videoTitle.replace(/[^\w\s]/gi, "_");
         console.log("Título del video:", videoTitle);
     } catch (error) {
@@ -96,9 +89,9 @@ app.get("/download", async (req, res) => {
 
     let command;
     if (format === 'mp4') {
-        command = `yt-dlp --cookies-from-browser firefox -f bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4 -o "${outputPath}" "${videoUrl}"`;
+        command = `yt-dlp --cookies ${cookiesFilePath} -f bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4 -o "${outputPath}" "${videoUrl}"`;
     } else if (format === 'mp3') {
-        command = `yt-dlp --cookies-from-browser firefox -x --audio-format mp3 -o "${outputPath}" "${videoUrl}"`;
+        command = `yt-dlp --cookies ${cookiesFilePath} -x --audio-format mp3 -o "${outputPath}" "${videoUrl}"`;
     } else {
         return res.status(400).send("Formato no soportado.");
     }
