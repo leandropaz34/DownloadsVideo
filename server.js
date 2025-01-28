@@ -43,9 +43,15 @@ function cleanDownloadsIfNeeded() {
     }
 }
 
+// Función de retraso
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 // Ruta para obtener detalles del video
-app.get("/video-details", (req, res) => {
+app.get("/video-details", async (req, res) => {
     const videoUrl = req.query.url;
+
+    // Retraso para reducir la frecuencia de las solicitudes
+    await delay(5000); // Esperar 5 segundos entre solicitudes
 
     // Obtenemos el título del video y la miniatura usando yt-dlp (funciona para múltiples plataformas)
     let videoTitle = "video";
@@ -66,7 +72,7 @@ app.get("/video-details", (req, res) => {
 });
 
 // Ruta para descargar videos o audio
-app.get("/download", (req, res) => {
+app.get("/download", async (req, res) => {
     const videoUrl = req.query.url;
     const format = req.query.format;
 
@@ -76,6 +82,10 @@ app.get("/download", (req, res) => {
     }
 
     let videoTitle = "video";
+
+    // Retraso para reducir la frecuencia de las solicitudes
+    await delay(5000); // Esperar 5 segundos entre solicitudes
+
     try {
         videoTitle = execSync(`yt-dlp --cookies ${cookiesFilePath} --get-title "${videoUrl}"`).toString().trim();
         videoTitle = videoTitle.replace(/[^\w\s]/gi, "_");
