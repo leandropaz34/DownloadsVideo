@@ -13,15 +13,7 @@ const PORT = process.env.PORT || 3000;
 // Configuración y constantes
 const downloadsDir = path.join(__dirname, "downloads");
 const MAX_FILES = 5;
-
-// Comando yt-dlp con cookies
-const command = `yt-dlp --cookies-from-browser chrome --get-title "https://www.youtube.com/watch?v=pVgZ6zYN6ms"`;
-try {
-  const output = execSync(command, { encoding: 'utf-8' });
-  console.log(output);
-} catch (error) {
-  console.error('Error:', error.message);
-}
+const cookiesFilePath = path.join(__dirname, "cookies.txt");
 
 // Crear el directorio de descargas si no existe
 if (!fs.existsSync(downloadsDir)) {
@@ -59,8 +51,8 @@ app.get("/video-details", (req, res) => {
     let videoTitle = "video";
     let videoThumbnail = "";
     try {
-        videoTitle = execSync(`yt-dlp --get-title "${videoUrl}"`).toString().trim();
-        videoThumbnail = execSync(`yt-dlp --get-thumbnail "${videoUrl}"`).toString().trim();
+        videoTitle = execSync(`yt-dlp --cookies ${cookiesFilePath} --get-title "${videoUrl}"`).toString().trim();
+        videoThumbnail = execSync(`yt-dlp --cookies ${cookiesFilePath} --get-thumbnail "${videoUrl}"`).toString().trim();
         videoTitle = videoTitle.replace(/[^\w\s]/gi, "_");
     } catch (error) {
         console.error("Error al obtener los detalles del video:", error);
@@ -85,7 +77,7 @@ app.get("/download", (req, res) => {
 
     let videoTitle = "video";
     try {
-        videoTitle = execSync(`yt-dlp --get-title "${videoUrl}"`).toString().trim();
+        videoTitle = execSync(`yt-dlp --cookies ${cookiesFilePath} --get-title "${videoUrl}"`).toString().trim();
         videoTitle = videoTitle.replace(/[^\w\s]/gi, "_");
         console.log("Título del video:", videoTitle);
     } catch (error) {
@@ -97,9 +89,9 @@ app.get("/download", (req, res) => {
 
     let command;
     if (format === 'mp4') {
-        command = `yt-dlp -f bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4 -o "${outputPath}" "${videoUrl}"`;
+        command = `yt-dlp --cookies ${cookiesFilePath} -f bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4 -o "${outputPath}" "${videoUrl}"`;
     } else if (format === 'mp3') {
-        command = `yt-dlp -x --audio-format mp3 -o "${outputPath}" "${videoUrl}"`;
+        command = `yt-dlp --cookies ${cookiesFilePath} -x --audio-format mp3 -o "${outputPath}" "${videoUrl}"`;
     } else {
         return res.status(400).send("Formato no soportado.");
     }
