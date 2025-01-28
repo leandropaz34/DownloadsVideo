@@ -2,7 +2,7 @@
   "name": "nombre-del-proyecto",
   "version": "1.0.0",
   "description": "Descripción del proyecto",
-  "main": "server.js",  // Este es tu archivo principal del servidor
+  "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
