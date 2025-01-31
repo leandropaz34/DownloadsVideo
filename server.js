@@ -71,7 +71,7 @@ app.get("/video-details", async (req, res) => {
     let videoThumbnail = "";
     
     try {
-        const cookieOption = areCookiesValid() ? "--cookies-from-browser" : "";
+        const cookieOption = areCookiesValid() ? `--cookies ${cookiesFilePath}` : ""; // Usar cookies desde archivo
         videoTitle = execSync(`yt-dlp ${cookieOption} --get-title "${videoUrl}"`).toString().trim();
         videoThumbnail = execSync(`yt-dlp ${cookieOption} --get-thumbnail "${videoUrl}"`).toString().trim();
         videoTitle = videoTitle.replace(/[^\w\s]/gi, "_");
@@ -97,7 +97,7 @@ app.get("/download", async (req, res) => {
     await delay(10000); // Reducir la frecuencia de las solicitudes
 
     try {
-        const cookieOption = areCookiesValid() ? `--cookies ${cookiesFilePath}` : "";
+        const cookieOption = areCookiesValid() ? `--cookies ${cookiesFilePath}` : ""; // Usar cookies desde archivo
         videoTitle = execSync(`yt-dlp ${cookieOption} --get-title "${videoUrl}"`).toString().trim();
         videoTitle = videoTitle.replace(/[^\w\s]/gi, "_");
         console.log("🎥 Título del video:", videoTitle);
@@ -107,13 +107,13 @@ app.get("/download", async (req, res) => {
     }
 
     const outputPath = path.join(downloadsDir, `${videoTitle}.${format}`);
-    const cookieOption = areCookiesValid() ? `--cookies ${cookiesFilePath}` : "";
+    const downloadCookieOption = areCookiesValid() ? `--cookies ${cookiesFilePath}` : ""; // Usar cookies si son válidas
 
     let command;
     if (format === "mp4") {
-        command = `yt-dlp ${cookieOption} -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4" -o "${outputPath}" "${videoUrl}"`;
+        command = `yt-dlp ${downloadCookieOption} -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4" -o "${outputPath}" "${videoUrl}"`;
     } else if (format === "mp3") {
-        command = `yt-dlp ${cookieOption} -x --audio-format mp3 -o "${outputPath}" "${videoUrl}"`;
+        command = `yt-dlp ${downloadCookieOption} -x --audio-format mp3 -o "${outputPath}" "${videoUrl}"`;
     } else {
         return res.status(400).send("Formato no soportado.");
     }
