@@ -112,4 +112,45 @@ app.get("/download", async (req, res) => {
 
     downloadProcess.stdout.on("data", (data) => {
         console.log("Salida stdout:", data);
-        const progress
+        const progressMatch = data.match(/(\d+\.\d+)%/);
+        if (progressMatch) {
+            const progress = parseFloat(progressMatch[1]);
+            io.emit("progress", progress);
+        }
+    });
+
+    downloadProcess.stderr.on("data", (data) => {
+        console.error("Salida stderr:", data);
+    });
+
+    downloadProcess.on("close", (code) => {
+        if (code === 0 && fs.existsSync(outputPath)) {
+            res.setHeader("Content-Disposition", `attachment; filename="${videoTitle}.${format}"`);
+            res.download(outputPath, (err) => {
+                if (!err) {
+                    fs.unlinkSync(outputPath);
+                    cleanDownloadsIfNeeded();
+                } else {
+                    console.error("Error al enviar el archivo:", err);
+                    res.status(500).send("Error al enviar el archivo.");
+                }
+            });
+        } else {
+            console.error("El archivo de descarga no se generó.");
+            res.status(500).send("Error: El archivo no se generó.");
+        }
+    });
+});
+
+// Iniciar el servidor
+server.listen(PORT, () => {
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+});
+
+// Emitir progreso al cliente
+io.on("connection", (socket) => {
+    console.log("Cliente conectado.");
+    socket.on("disconnect", () => {
+        console.log("Cliente desconectado.");
+    });
+});
