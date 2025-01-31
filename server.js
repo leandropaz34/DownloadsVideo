@@ -71,7 +71,7 @@ app.get("/video-details", async (req, res) => {
     let videoThumbnail = "";
     
     try {
-        const cookieOption = areCookiesValid() ? `--cookies ${cookiesFilePath}` : "";
+        const cookieOption = areCookiesValid() ? "--cookies-from-browser" : "";
         videoTitle = execSync(`yt-dlp ${cookieOption} --get-title "${videoUrl}"`).toString().trim();
         videoThumbnail = execSync(`yt-dlp ${cookieOption} --get-thumbnail "${videoUrl}"`).toString().trim();
         videoTitle = videoTitle.replace(/[^\w\s]/gi, "_");
