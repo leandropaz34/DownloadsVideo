@@ -57,8 +57,8 @@ app.get("/video-details", async (req, res) => {
     let videoTitle = "video";
     let videoThumbnail = "";
     try {
-        videoTitle = execSync(yt-dlp --cookies ${cookiesFilePath} --get-title "${videoUrl}").toString().trim();
-        videoThumbnail = execSync(yt-dlp --cookies ${cookiesFilePath} --get-thumbnail "${videoUrl}").toString().trim();
+        videoTitle = execSync(`yt-dlp --cookies ${cookiesFilePath} --get-title "${videoUrl}"`).toString().trim();
+        videoThumbnail = execSync(`yt-dlp --cookies ${cookiesFilePath} --get-thumbnail "${videoUrl}"`).toString().trim();
         videoTitle = videoTitle.replace(/[^\w\s]/gi, "_");
     } catch (error) {
         console.error("Error al obtener los detalles del video:", error);
@@ -87,7 +87,7 @@ app.get("/download", async (req, res) => {
     await delay(10000); // Esperar 10 segundos entre solicitudes
 
     try {
-        videoTitle = execSync(yt-dlp --cookies ${cookiesFilePath} --get-title "${videoUrl}").toString().trim();
+        videoTitle = execSync(`yt-dlp --cookies ${cookiesFilePath} --get-title "${videoUrl}"`).toString().trim();
         videoTitle = videoTitle.replace(/[^\w\s]/gi, "_");
         console.log("Título del video:", videoTitle);
     } catch (error) {
@@ -95,13 +95,13 @@ app.get("/download", async (req, res) => {
         return res.status(500).send("Error al obtener el título del video.");
     }
 
-    const outputPath = path.join(downloadsDir, ${videoTitle}.${format});
+    const outputPath = path.join(downloadsDir, `${videoTitle}.${format}`);
 
     let command;
     if (format === 'mp4') {
-        command = yt-dlp --cookies ${cookiesFilePath} -f bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4 -o "${outputPath}" "${videoUrl}";
+        command = `yt-dlp --cookies ${cookiesFilePath} -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4" -o "${outputPath}" "${videoUrl}"`;
     } else if (format === 'mp3') {
-        command = yt-dlp --cookies ${cookiesFilePath} -x --audio-format mp3 -o "${outputPath}" "${videoUrl}";
+        command = `yt-dlp --cookies ${cookiesFilePath} -x --audio-format mp3 -o "${outputPath}" "${videoUrl}"`;
     } else {
         return res.status(400).send("Formato no soportado.");
     }
@@ -112,45 +112,4 @@ app.get("/download", async (req, res) => {
 
     downloadProcess.stdout.on("data", (data) => {
         console.log("Salida stdout:", data);
-        const progressMatch = data.match(/(\d+\.\d+)%/);
-        if (progressMatch) {
-            const progress = parseFloat(progressMatch[1]);
-            io.emit("progress", progress);
-        }
-    });
-
-    downloadProcess.stderr.on("data", (data) => {
-        console.error("Salida stderr:", data);
-    });
-
-    downloadProcess.on("close", (code) => {
-        if (code === 0 && fs.existsSync(outputPath)) {
-            res.setHeader("Content-Disposition", attachment; filename="${videoTitle}.${format}");
-            res.download(outputPath, (err) => {
-                if (!err) {
-                    fs.unlinkSync(outputPath);
-                    cleanDownloadsIfNeeded();
-                } else {
-                    console.error("Error al enviar el archivo:", err);
-                    res.status(500).send("Error al enviar el archivo.");
-                }
-            });
-        } else {
-            console.error("El archivo de descarga no se generó.");
-            res.status(500).send("Error: El archivo no se generó.");
-        }
-    });
-});
-
-// Iniciar el servidor
-server.listen(PORT, () => {
-    console.log(Servidor corriendo en http://localhost:${PORT});
-});
-
-// Emitir progreso al cliente
-io.on("connection", (socket) => {
-    console.log("Cliente conectado.");
-    socket.on("disconnect", () => {
-        console.log("Cliente desconectado.");
-    });
-});
+        const progress
