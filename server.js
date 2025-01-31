@@ -38,7 +38,7 @@ function cleanDownloadsIfNeeded() {
 
         filesToDelete.forEach(({ filePath }) => {
             fs.unlinkSync(filePath);
-            console.log(Archivo eliminado por límite: ${filePath});
+            console.log(`Archivo eliminado por límite: ${filePath}`);
         });
     }
 }
